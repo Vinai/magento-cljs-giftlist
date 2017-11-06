@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <block class="Magento\Framework\View\Element\Text"
+                name="example_giftlist.add-gift">
+            <arguments>
+                <argument name="text" xsi:type="string"><![CDATA[<div class="giftlist-add-gift"></div>]]></argument>
+            </arguments>
+        </block>
+        <block class="Magento\Framework\View\Element\Text"
+                name="example_giftlist.show-list">
+            <arguments>
+                <argument name="text" xsi:type="string"><![CDATA[<div class="giftlist-show-list"></div>]]></argument>
+            </arguments>
+        </block>
+    </body>
+</page>

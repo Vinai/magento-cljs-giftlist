@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="giftlist"/>
+    <body>
+        <move element="example_giftlist.add-gift" destination="product.info.addto"
+                before="-"/>
+        <referenceBlock name="product.info.details">
+            <block class="Magento\Framework\View\Element\Text\ListText"
+                    name="gift-list-tab" group="detailed_info">
+                <arguments>
+                    <argument name="title" xsi:type="string"
+                            translate="true">Gift List</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+        <move element="example_giftlist.show-list" destination="gift-list-tab"/>
+    </body>
+</page>
