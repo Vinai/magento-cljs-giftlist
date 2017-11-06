@@ -3,21 +3,14 @@
 
 (def <sub (comp deref subscribe))
 
-(defn delete [event]
-  [:a {:on-click #(dispatch event)
-       :style    {:cursor "pointer"}}
-   " (X)"])
-
 (defn gift [recipient [sku product-name]]
-  [:div product-name
-   [delete [:remove-gift recipient sku]]])
+  [:div product-name])
 
 (defn gift-list-recipient [recipient]
   (if (<sub [:has-gifts? recipient])
     [:div.gift-recipient
      [:div.name
-      [:strong recipient]
-      [delete [:remove-recipient recipient]]]
+      [:strong recipient]]
      (into [:div.gifts]
            (mapv (partial gift recipient)
                  (<sub [:gifts-for recipient])))]))
