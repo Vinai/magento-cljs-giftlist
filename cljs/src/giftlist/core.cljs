@@ -11,15 +11,15 @@
   (= "complete" (.-readyState js/document)))
 
 (defn subscribe-to-customer-name []
-  (if (document-loaded?) 
+  (if (not (document-loaded?))
+    (js/window.addEventListener "load" subscribe-to-customer-name)
     (js/window.require (array "Magento_Customer/js/customer-data")
                        (fn [customer-data]
                          (let [customer (.get customer-data "customer")
                                update-fn #(when-let [n (.-firstname %)]
                                            (dispatch [:set-owner-name n]))]
                            (.subscribe customer update-fn)
-                           (update-fn (customer)))))
-    (js/window.addEventListener "load" subscribe-to-customer-name)))
+                           (update-fn (customer)))))))
 
 (defn get-elements-by-class-name [class]
   (let [nodes (js/document.getElementsByClassName class)]

@@ -1,5 +1,6 @@
 (ns giftlist.events
-  (:require [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx dispatch debug]]))
+  (:require [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx dispatch debug]]
+            [clojure.string :as string]))
 
 (reg-event-fx :init-db [(inject-cofx :storage)]
               (fn [cofx]
@@ -28,7 +29,7 @@
 (reg-event-fx :add-to-list
               (fn [cofx [_ sku product-name recipient]]
                 (let [db           (:db cofx)
-                      path         [:gift-list recipient sku]]
+                      path         [:gift-list (string/trim recipient) sku]]
                   {:db       (assoc-in db path product-name)
                    :dispatch [:persist-giftlist]})))
 
