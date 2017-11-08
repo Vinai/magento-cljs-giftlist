@@ -3,14 +3,20 @@
 
 (def <sub (comp deref subscribe))
 
+(defn rm-button [event]
+  [:a {:on-click #(dispatch event)
+       :style    {:cursor "pointer"}}
+   [:span [:span.icon-remove] " (X)"]])
+
 (defn gift [recipient [sku product-name]]
-  [:div product-name])
+  [:div product-name " " [rm-button [:remove-gift recipient sku]]])
 
 (defn gift-list-recipient [recipient]
   (if (<sub [:has-gifts? recipient])
     [:div.gift-recipient
      [:div.name
-      [:strong recipient]]
+      [:strong recipient] " "
+      [rm-button [:remove-recipient recipient]]]
      (into [:div.gifts]
            (mapv (partial gift recipient)
                  (<sub [:gifts-for recipient])))]))
@@ -22,6 +28,9 @@
   (if (<sub [:gift-list?])
     [:div.block.widget
      [:div.block-title
-      [:strong "Gift Plan"]]
+      [:strong
+       (if-let [owner (<sub [:owner])]
+         (str owner "'s Plan")
+         "Gift Plan")]]
      [:div.block-content
       [gift-list]]]))

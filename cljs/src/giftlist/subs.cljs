@@ -29,3 +29,7 @@
            (subscribe [:gifts-for recipient]))
          (fn [gifts-for-recipient _]
            (< 0 (count gifts-for-recipient))))
+
+(reg-sub :owner
+         (fn [db]
+           (:owner-name db)))

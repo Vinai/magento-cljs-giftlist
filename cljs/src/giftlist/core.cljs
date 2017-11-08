@@ -1,11 +1,25 @@
 (ns giftlist.core
   (:require [reagent.core :as reagent]
-            [re-frame.core :refer [dispatch-sync]]
+            [re-frame.core :refer [dispatch-sync dispatch]]
             [clojure.string :as string]
             [giftlist.events]
             [giftlist.subs]
             [giftlist.add-to-giftlist :as add-to-giftlist]
             [giftlist.show-list :as show-list]))
+
+(defn document-loaded? []
+  (= "complete" (.-readyState js/document)))
+
+(defn subscribe-to-customer-name []
+  (if (document-loaded?) 
+    (js/window.require (array "Magento_Customer/js/customer-data")
+                       (fn [customer-data]
+                         (let [customer (.get customer-data "customer")
+                               update-fn #(when-let [n (.-firstname %)]
+                                           (dispatch [:set-owner-name n]))]
+                           (.subscribe customer update-fn)
+                           (update-fn (customer)))))
+    (js/window.addEventListener "load" subscribe-to-customer-name)))
 
 (defn get-elements-by-class-name [class]
   (let [nodes (js/document.getElementsByClassName class)]
@@ -16,9 +30,6 @@
 
 (defn select-show-list-dom-nodes []
   (get-elements-by-class-name "giftlist-show-list"))
-
-(defn document-loaded? []
-  (= "complete" (.-readyState js/document)))
 
 (defn nth-parent [node n]
   (reduce #(.-parentElement %) node (range n)))
@@ -57,6 +68,9 @@
 (defn render! []
   (render-when-ready! select-add-gift-dom-nodes render-add-gift)
   (render-when-ready! select-show-list-dom-nodes render-show-list))
+
 (dispatch-sync [:init-db])
+
+(subscribe-to-customer-name)
 
 (render!)

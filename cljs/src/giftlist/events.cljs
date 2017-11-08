@@ -1,5 +1,5 @@
 (ns giftlist.events
-  (:require [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx dispatch]]))
+  (:require [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx dispatch debug]]))
 
 (reg-event-fx :init-db [(inject-cofx :storage)]
               (fn [cofx]
@@ -15,12 +15,11 @@
                 (dissoc db :input-active)))
 
 (defn remove-recipients-without-gifts [recipients]
-  (let [no-gifts? (fn [[recipient gifts]]
-                    (empty? gifts))]
+  (let [no-gifts? #(empty? (second %))]
     (into {} (remove no-gifts? recipients))))
 
 (defn clean-db-for-storage [db]
-  (dissoc db :input-active))
+  (dissoc db :input-active :owner-name))
 
 (reg-event-fx :persist-giftlist
               (fn [cofx]
@@ -47,3 +46,7 @@
                     {:dispatch [:remove-recipient recipient]}
                     {:db       (assoc-in db [:gift-list recipient] gifts)
                      :dispatch [:persist-giftlist]}))))
+
+(reg-event-db :set-owner-name
+              (fn [db [_ owner]]
+                (assoc db :owner-name owner)))
