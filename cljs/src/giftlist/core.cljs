@@ -10,16 +10,29 @@
 (defn document-loaded? []
   (= "complete" (.-readyState js/document)))
 
+
+(comment "JS Version:
+function subscribe_to_magento_customer_data_fn (updateFn) {
+  require(['Magento_Customer/js/customer-data'],
+    function (customerData) {
+        var customer = customerData.get('customer');
+        customer.subscribe(updateFn);
+        updateFn(customer());
+  });
+}
+")
+
+(defn subscribe-to-customer-data-fn [update-fn]
+  (js/window.require (array "Magento_Customer/js/customer-data")
+                     (fn [customer-data]
+                       (let [customer (.get customer-data "customer")]
+                         (.subscribe customer update-fn)
+                         (update-fn (customer))))))
+
 (defn subscribe-to-customer-name []
-  (if (not (document-loaded?))
-    (js/window.addEventListener "load" subscribe-to-customer-name)
-    (js/window.require (array "Magento_Customer/js/customer-data")
-                       (fn [customer-data]
-                         (let [customer (.get customer-data "customer")
-                               update-fn #(when-let [n (.-firstname %)]
-                                           (dispatch [:set-owner-name n]))]
-                           (.subscribe customer update-fn)
-                           (update-fn (customer)))))))
+  (if (document-loaded?)
+    (subscribe-to-customer-data-fn #(dispatch [:set-owner-name (.-firstname %)]))
+    (js/window.addEventListener "load" subscribe-to-customer-name)))
 
 (defn get-elements-by-class-name [class]
   (let [nodes (js/document.getElementsByClassName class)]
