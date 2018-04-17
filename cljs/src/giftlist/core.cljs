@@ -23,11 +23,7 @@ function subscribe_to_magento_customer_data_fn (updateFn) {
 ")
 
 (defn subscribe-to-customer-data-fn [update-fn]
-  (js/window.require (array "Magento_Customer/js/customer-data")
-                     (fn [customer-data]
-                       (let [customer (.get customer-data "customer")]
-                         (.subscribe customer update-fn)
-                         (update-fn (customer))))))
+  )
 
 (defn subscribe-to-customer-name []
   (if (document-loaded?)
